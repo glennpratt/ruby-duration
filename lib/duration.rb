@@ -2,6 +2,8 @@
 require 'i18n'
 require 'iso8601'
 
+# I18n.load_path << "#{File.dirname(__FILE__)}/duration/locale/en.yml"
+
 # Duration objects are simple mechanisms that allow you to operate on durations
 # of time.  They allow you to know how much time has passed since a certain
 # point in time, or they can tell you how much time something is (when given as
@@ -245,5 +247,16 @@ private
     label = send(fn_name) == 1 ? singular : plural
 
     I18n.t(label, :scope => :ruby_duration, :default => label.to_s)
+  end
+
+  # Don't require I18n translations to be configured if we provide a default.
+  # @see I18n.t
+  def translate(label, opts = {})
+    enforce_available_locales = I18n.enforce_available_locales
+    I18n.enforce_available_locales = false if opts[:default]
+    opts[:scope] = :ruby_duration
+    I18n.t(label, opts)
+  ensure
+    I18n.enforce_available_locales = enforce_available_locales
   end
 end

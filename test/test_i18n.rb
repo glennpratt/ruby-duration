@@ -1,15 +1,29 @@
 # -*- encoding:  utf-8 -*-
 require 'helper'
 
-I18n.load_path << File.join(File.dirname(__FILE__), 'fixtures', 'locales', 'pt.yml')
+PT_YAML_FILE = File.join(File.dirname(__FILE__), 'fixtures', 'locales', 'pt.yml')
 
 describe "I18n" do
-  describe "when the locale is pt" do
+  describe "when locale is en" do
     before do
+      I18n.locale = :en
+    end
+
+    it "should work without providing translations" do
+      Duration.new(:second => 1).format("%~s")
+    end
+  end
+
+  describe "when the locale is pt" do
+    before(:each) do
+      I18n.reload!
+      I18n.load_path << PT_YAML_FILE
       I18n.locale = :pt
     end
 
-    after do
+    after(:each) do
+      I18n.load_path.delete(PT_YAML_FILE)
+      I18n.reload!
       I18n.locale = :en
     end
 
